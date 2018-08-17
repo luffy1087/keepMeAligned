@@ -1,0 +1,19 @@
+{
+  "name": "keepmealigned",
+  "version": "1.0.0",
+  "description": "Helps developer to have all of his branches aligned to the main branch",
+  "main": "index.js",
+  "dependencies": {
+    "readline-sync": "^1.4.9"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luffy1087/keepMeAligned.git"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Francesco Ferdico",
+  "license": "ISC"
+}

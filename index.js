@@ -5,9 +5,9 @@ var CONFIGURATION = getConfiguration();
 
 process.chdir(CONFIGURATION.repoPath);
 
-childProcess.execSync('git reset --hard & git clean -df & git checkout .');
-childProcess.execSync('git checkout ' + CONFIGURATION.mainBranch);
-childProcess.execSync('git pull');
+executeCommand('git reset --hard & git clean -df & git checkout .');
+executeCommand('git checkout ' + CONFIGURATION.mainBranch);
+executeCommand('git pull');
 
 var branches = GetBranchesByAuthor();
 for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {

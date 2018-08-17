@@ -10,37 +10,35 @@ childProcess.execSync('git checkout ' + CONFIGURATION.mainBranch);
 childProcess.execSync('git pull');
 
 var branches = GetBranchesByAuthor();
-for (var i = 0, retryAttempt = 1, b; b = branches[i]; i++) {
+for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {
     if (retryAttempt > 3) { throw new Error("ATTEMPTS EXCEDEED!"); }
 
     try {
-        console.log('git reset --hard & git clean -df & git checkout .');
-        //childProcess.execSync('git reset --hard & git clean -df & git checkout .');
-        console.log('git checkout ' + b);
-        //childProcess.execSync('git checkout ' + b);
+        executeCommand('git reset --hard & git clean -df & git checkout .');
+        executeCommand('git checkout ' + branch);
+        
         try {
-            console.log('git pull');
-            //childProcess.execSync('git pull');
+            executeCommand('git pull');
         } catch(e) {
             console.log('PULL ERROR');
         }
+
         try {
-            console.log('git merge development');
-            //childProcess.execSync('git merge development');
+            executeCommand('git merge ' + CONFIGURATION.mainBranch);
         } catch(e) {
-            console.log('MERGE TOOL');
-            //childProcess.execSync('git mergetool');
+            executeCommand('git mergetool');
         }
-        //childProcess.execSync('git status');
-        //childProcess.execSync('git add .');
+
+        executeCommand('git add .');
+
         try {
-            console.log('git commit -m "Merge ' + b + ' into development"');
-            //childProcess.execSync('git commit -m "Merge ' + b + ' into development"');
-        }catch(e) {
+            executeCommand('git commit -m "Merge ' + branch + ' into ' + CONFIGURATION.mainBranch + '"');
+        } catch(e) {
             console.log('CANNOT COMMIT NOTHING');
         }
-        console.log('git push');
-        //childProcess.execSync('git push');
+
+        executeCommand('git push');
+        
     } catch(e) {
         console.log('RETRY');
         i--;
@@ -49,7 +47,7 @@ for (var i = 0, retryAttempt = 1, b; b = branches[i]; i++) {
 }
 
 function GetBranchesByAuthor() {
-    var ALL_UNMERGED_BRANCHES = childProcess.execSync('git branch --no-merged development -r').toString().split('\n');
+    var ALL_UNMERGED_BRANCHES = childProcess.execSync('git branch --no-merged ' + CONFIGURATION.mainBranch-r).toString().split('\n');
     var branch, author, branchesByAuthor = [], splittedBranch;
     for (var i = 0; i < ALL_UNMERGED_BRANCHES.length; i++) {
         branch = ALL_UNMERGED_BRANCHES[i].trim();
@@ -77,4 +75,9 @@ function getConfiguration() {
     fs.writeFileSync('./configuration.json', JSON.stringify(json));
     
     return json;
+}
+
+function executeCommand(command) {
+    console.log(command);
+    childProcess.execSync(command);
 }

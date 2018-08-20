@@ -1,1 +1,3 @@
 configuration.json
+node_modules
+*.log

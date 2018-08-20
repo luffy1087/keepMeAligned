@@ -11,7 +11,12 @@ executeCommand('git pull');
 
 var branches = GetBranchesByAuthor();
 for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {
-    if (retryAttempt > 3) { throw new Error("ATTEMPTS EXCEDEED!"); }
+    
+    if (retryAttempt > 3) {
+        console.log('Branch ' + branch + ' cannot be aligned');
+        retryAttempt = 1;
+        continue;
+    }
 
     try {
         executeCommand('git reset --hard & git clean -df & git checkout .');
@@ -34,7 +39,7 @@ for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {
         try {
             executeCommand('git commit -m "Merge ' + branch + ' into ' + CONFIGURATION.mainBranch + '"');
         } catch(e) {
-            console.log('CANNOT COMMIT NOTHING');
+            console.log('CANNOT COMMIT ANYTHING');
         }
 
         executeCommand('git push');
@@ -47,12 +52,12 @@ for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {
 }
 
 function GetBranchesByAuthor() {
-    var ALL_UNMERGED_BRANCHES = childProcess.execSync('git branch --no-merged ' + CONFIGURATION.mainBranch-r).toString().split('\n');
+    var ALL_UNMERGED_BRANCHES = childProcess.execSync('git branch -r --no-merged ' + CONFIGURATION.mainBranch).toString().split('\n');
     var branch, author, branchesByAuthor = [], splittedBranch;
     for (var i = 0; i < ALL_UNMERGED_BRANCHES.length; i++) {
         branch = ALL_UNMERGED_BRANCHES[i].trim();
         author = childProcess.execSync('git log --pretty=tformat:%an -1 ' + branch).toString().trim();
-        if (branch !== '' && author.toLocaleLowerCase() === CONFIGURATION.author) {
+        if (branch !== '' && author.toLowerCase() === CONFIGURATION.author.toLowerCase()) {
             splittedBranch = branch.split('/');
             branchesByAuthor.push(splittedBranch[splittedBranch.length-1]);
         }

@@ -10,6 +10,13 @@ executeCommand('git checkout ' + CONFIGURATION.mainBranch);
 executeCommand('git pull');
 
 var branches = GetBranchesByAuthor();
+
+console.log('These branches will be aligned to ' + CONFIGURATION.mainBranch + '\n');
+console.log(branches);
+if (asker.question('\nWould you like to do that? (y/n)\n') !== 'y') {
+    return;
+}
+
 for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {
     
     if (retryAttempt > 3) {

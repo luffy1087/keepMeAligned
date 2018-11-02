@@ -58,15 +58,16 @@ for (var i = 0, retryAttempt = 1, branch; branch = branches[i]; i++) {
     }
 }
 
+executeCommand('git checkout ' + CONFIGURATION.mainBranch);
+
 function GetBranchesByAuthor() {
     var ALL_UNMERGED_BRANCHES = childProcess.execSync('git branch -r --no-merged ' + CONFIGURATION.mainBranch).toString().split('\n');
-    var branch, author, branchesByAuthor = [], splittedBranch;
+    var branch, author, branchesByAuthor = [];
     for (var i = 0; i < ALL_UNMERGED_BRANCHES.length; i++) {
         branch = ALL_UNMERGED_BRANCHES[i].trim();
         author = childProcess.execSync('git log --pretty=tformat:%an -1 ' + branch).toString().trim();
         if (branch !== '' && author.toLowerCase() === CONFIGURATION.author.toLowerCase()) {
-            splittedBranch = branch.split('/');
-            branchesByAuthor.push(splittedBranch[splittedBranch.length-1]);
+            branchesByAuthor.push(branch.split('/').splice(1).join('/'));
         }
     }
     
